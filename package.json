@@ -1,6 +1,6 @@
 {
   "name": "bc-countries",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "A convenient Javascript countries utilities (e.g: dial codes, country codes, names)",
   "main": "src.js",
   "scripts": {

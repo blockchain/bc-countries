@@ -1,5 +1,4 @@
-# bc-countries
-[![Build Status](https://travis-ci.org/Ahimta/bc-countries.svg?branch=master)](https://travis-ci.org/Ahimta/bc-countries)
+# bc-countries [![Build Status](https://travis-ci.org/Ahimta/bc-countries.svg?branch=master)](https://travis-ci.org/Ahimta/bc-countries)
 A convenient Javascript countries utilities (e.g: dial codes, country codes, names)
 
 ## Installation

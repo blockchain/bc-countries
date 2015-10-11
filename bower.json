@@ -24,6 +24,7 @@
     "tests"
   ],
   "dependencies": {
-    "digits-trie": "~1.0.0"
+    "digits-trie": "~1.0.0",
+    "google-libphonenumber": "~1.0.7"
   }
 }

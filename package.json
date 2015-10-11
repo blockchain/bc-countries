@@ -21,7 +21,8 @@
   },
   "homepage": "https://github.com/Ahimta/bc-countries",
   "dependencies": {
-    "digits-trie": "^1.0.0"
+    "digits-trie": "^1.0.0",
+    "google-libphonenumber": "^1.0.7"
   },
   "devDependencies": {
     "browserify": "^11.2.0",
@@ -47,6 +48,8 @@
     "node": ">=0.10.0"
   },
   "browserify-shim": {
+    "google-libphonenumber": "global:libphonenumber",
+    "bc-countries": "global:bcCountries",
     "digits-trie": "global:DigitsTrie"
   },
   "browserify": {

@@ -1321,6 +1321,8 @@ function formatNumberHelper(val, countryCode, addSuffix, allowExtension, isAllow
 }
 
 var iso2Countries = {};
+var iso2Priority = {};
+var dialIso2 = {};
 var dialCodes = new Trie();
 
 for (var i = 0; i < allCountries.length; i++) {
@@ -1329,8 +1331,14 @@ for (var i = 0; i < allCountries.length; i++) {
   var dialCode = country[2];
   var iso2 = country[1];
 
-  dialCodes.set(dialCode, iso2);
   iso2Countries[iso2] = country;
+  iso2Priority[iso2] = country[3];
+  var oldIso2 = null;
+  if (oldIso2 = dialIso2[dialCode]) {
+    if (typeof(iso2Priority[oldIso2]) == "number" && iso2Priority[oldIso2] < country[3]) continue;
+  }
+  dialIso2[dialCode] = iso2;
+  dialCodes.set(dialCode, iso2);
 }
 
 function makeCountry (country) {

@@ -1,6 +1,7 @@
-'use strict';
+import libphonenumber from 'google-libphonenumber';
+import Trie from 'digits-trie';
 
-var allCountries = [
+let allCountries = [
   [
     'Afghanistan (‫افغانستان‬‎)',
     'af',
@@ -1244,14 +1245,11 @@ var allCountries = [
   ]
 ];
 
-var libphonenumber = require('google-libphonenumber'),
-    Trie           = require('digits-trie');
-
 // check if given number is valid
 function isValidNumberHelper(number, countryCode) {
   try {
-    var phoneUtil = libphonenumber.PhoneNumberUtil.getInstance();
-    var numberObj = phoneUtil.parseAndKeepRawInput(number, countryCode);
+    let phoneUtil = libphonenumber.PhoneNumberUtil.getInstance();
+    let numberObj = phoneUtil.parseAndKeepRawInput(number, countryCode);
     return phoneUtil.isValidNumber(numberObj);
   } catch (e) {
     return false;
@@ -1261,7 +1259,7 @@ function isValidNumberHelper(number, countryCode) {
 // format the given number (optionally add any formatting suffix e.g. a hyphen)
 function formatNumberHelper(val, countryCode, addSuffix, allowExtension, isAllowedKey) {
   try {
-    var clean = val.replace(/\D/g, ""),
+    let clean = val.replace(/\D/g, ""),
       // NOTE: we use AsYouTypeFormatter because the default format function can't handle incomplete numbers e.g. "+17024" formats to "+1 7024" as opposed to "+1 702-4"
       formatter = new libphonenumber.AsYouTypeFormatter(countryCode),
       // if clean is empty, we still need this to be a string otherwise we get errors later
@@ -1273,7 +1271,7 @@ function formatNumberHelper(val, countryCode, addSuffix, allowExtension, isAllow
       clean = "+" + clean;
     }
 
-    for (var i = 0; i < clean.length; i++) {
+    for (let i = 0; i < clean.length; i++) {
       // TODO: improve this so don't just pump in every digit every time - we should just cache this formatter object, and just call inputDigit once each time the user enters a new digit
       next = formatter.inputDigit(clean.charAt(i));
       // if adding this char didn't change the length, or made it smaller (and there's no longer any spaces): that means that formatting failed which means the number was no longer a potentially valid number, so if we're allowing extensions: assume the rest is the ext
@@ -1292,13 +1290,13 @@ function formatNumberHelper(val, countryCode, addSuffix, allowExtension, isAllow
     // check if there's a suffix to add (unless there's an ext)
     if (addSuffix && !val.split(extSuffix)[1]) {
       // hack to get formatting suffix
-      var test = formatter.inputDigit('5');
+      let test = formatter.inputDigit('5');
       // again the "+44 " problem... (also affects "+45" apparently)
       if (test.charAt(test.length - 1) == " ") {
         test = test.substr(0, test.length - 1);
       }
       // if adding a '5' introduces a formatting char - check if the penultimate char is not-a-number
-      var penultimate = test.substr(test.length - 2, 1);
+      let penultimate = test.substr(test.length - 2, 1);
       // Note: never use isNaN without parseFloat
       if (isNaN(parseFloat(penultimate))) {
         // return the new value (minus that last '5' we just added)
@@ -1320,14 +1318,14 @@ function formatNumberHelper(val, countryCode, addSuffix, allowExtension, isAllow
   }
 }
 
-var iso2Countries = {};
-var dialCodes = new Trie();
+let iso2Countries = {};
+let dialCodes = new Trie();
 
-for (var i = 0; i < allCountries.length; i++) {
-  var country = allCountries[i];
+for (let i = 0; i < allCountries.length; i++) {
+  let country = allCountries[i];
 
-  var dialCode = country[2];
-  var iso2 = country[1];
+  let dialCode = country[2];
+  let iso2 = country[1];
 
   dialCodes.set(dialCode, iso2);
   iso2Countries[iso2] = country;
@@ -1341,27 +1339,27 @@ function makeCountry (country) {
   };
 }
 
-function getDialCodeByDigits (digits) {
+export function getDialCodeByDigits (digits) {
   if (!digits) { return '';                                          }
   else         { return dialCodes.longestMatchingPrefix(digits).key; }
 }
 
-function getIso2CodeByDigits (digits) {
+export function getIso2CodeByDigits (digits) {
   if (!digits) { return '';                                            }
   else         { return dialCodes.longestMatchingPrefix(digits).value; }
 }
 
-function getCountryByIso2Code (iso2) {
-  var country = iso2Countries[iso2];
+export function getCountryByIso2Code (iso2) {
+  let country = iso2Countries[iso2];
 
   if (country) { return makeCountry(iso2Countries[iso2]); }
   else         { return null;                             }
 }
 
-function getAllCountries () {
-  var countries = new Array(allCountries.length);
+export function getAllCountries () {
+  let countries = new Array(allCountries.length);
 
-  for (var i = 0; i < allCountries.length; i++) { countries[i] = makeCountry(allCountries[i]); }
+  for (let i = 0; i < allCountries.length; i++) { countries[i] = makeCountry(allCountries[i]); }
 
   return countries;
 }
@@ -1370,7 +1368,7 @@ function hasPrefix (number) {
   return (number[0] === '+');
 }
 
-function getDigits (number) {
+export function getDigits (number) {
   if (!number) { return '';                        }
   else         { return number.replace(/\D/g, ''); }
 }
@@ -1380,50 +1378,37 @@ function prefixNumber (number) {
   else                              { return number;         }
 }
 
-function formatNumber (number) {
+export function formatNumber (number) {
   if (!number) { return ''; }
   else {
-    var dialCode = getDialCodeByDigits(getDigits(number));
+    let dialCode = getDialCodeByDigits(getDigits(number));
 
     if (dialCode) { return formatNumberHelper(prefixNumber(number)); }
     else          { return number;                                   }
   }
 }
 
-function changeDialCode (number, newDialCode) {
+export function changeDialCode (number, newDialCode) {
   if (!number) { return ('+' + newDialCode); }
   else {
-    var digits = getDigits(number);
-    var oldDialCode = getDialCodeByDigits(digits);
+    let digits = getDigits(number);
+    let oldDialCode = getDialCodeByDigits(digits);
 
     if (oldDialCode) {
-      var numberWithNewDialCode = digits.replace(oldDialCode, newDialCode);
-      var formattedNumber = formatNumber(numberWithNewDialCode);
-      return formattedNumber;
+      let numberWithNewDialCode = digits.replace(oldDialCode, newDialCode);
+      return formatNumber(numberWithNewDialCode);
     }
     else { return formatNumber('+' + newDialCode + digits); }
   }
 }
 
-function isValidNumber (number) {
+export function isValidNumber (number) {
   if (!number || !hasPrefix(number)) { return false; }
   else {
-    var digits = getDigits(number);
-    var iso2Code = getIso2CodeByDigits(digits);
+    let digits = getDigits(number);
+    let iso2Code = getIso2CodeByDigits(digits);
 
     if (iso2Code) { return isValidNumberHelper(number, iso2Code); }
     else          { return false;                                 }
   }
 }
-
-module.exports = {
-  getCountryByIso2Code: getCountryByIso2Code,
-  getDialCodeByDigits: getDialCodeByDigits,
-  getIso2CodeByDigits: getIso2CodeByDigits,
-  getAllCountries: getAllCountries,
-
-  changeDialCode: changeDialCode,
-  isValidNumber: isValidNumber,
-  formatNumber: formatNumber,
-  getDigits: getDigits
-};

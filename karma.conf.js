@@ -3,6 +3,8 @@
 // Generated on 2015-10-10 using
 // generator-karma 1.0.0
 
+let wpConfig = require('./webpack.config');
+
 module.exports = function(config) {
   'use strict';
 
@@ -21,15 +23,24 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'bower_components/google-libphonenumber/dist/browser/libphonenumber.js',
-      'bower_components/digits-trie/dist/digits-trie.js',
-      'dist/bc-countries.js',
-      'test.js'
+      {pattern: 'test.js', watched: false}
     ],
 
-    // list of files / patterns to exclude
-    exclude: [
-    ],
+    preprocessors: {
+      // add webpack as preprocessor
+      'test.js': ['webpack']
+    },
+
+    webpack: {
+      // devTool: 'inline-source-map',
+      module: wpConfig.module
+    },
+
+    webpackMiddleware: {
+      // webpack-dev-middleware configuration
+      // i. e.
+      stats: 'errors-only'
+    },
 
     // web server port
     port: 9876,
@@ -44,17 +55,6 @@ module.exports = function(config) {
     // - IE (only Windows)
     browsers: [
       'PhantomJS'
-    ],
-
-    // Which plugins to enable
-    plugins: [
-      'karma-phantomjs-launcher',
-      'karma-firefox-launcher',
-      'karma-chrome-launcher',
-      'karma-safari-launcher',
-      'karma-opera-launcher',
-      'karma-ie-launcher',
-      'karma-jasmine'
     ],
 
     // Continuous Integration mode

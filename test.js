@@ -1,6 +1,6 @@
-'use strict';
+import * as bcCountries from './src';
 
-function itShouldReturnEmptyString (fn) {
+function itShouldReturnEmptyString(fn) {
   it('should return an empty string when given a faulsy value', function () {
     expect(fn(null)).toBe('');
     expect(fn('')).toBe('');

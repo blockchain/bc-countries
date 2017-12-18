@@ -75,7 +75,7 @@ describe('bcCountries.getCountryByIso2Code(iso2Code)', function () {
 
 describe('bcCountries.getAllCountries()', function () {
 
-  it('should have 242 elements', function () {
+  it('should have 243 elements', function () {
     expect(bcCountries.getAllCountries().length).toEqual(242);
   });
 

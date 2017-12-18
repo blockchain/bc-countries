@@ -424,11 +424,6 @@ var allCountries = [
     '350'
   ],
   [
-    'Global Mobile Satellite System',
-    'xg',
-    '881'
-  ],
-  [
     'Greece (Ελλάδα)',
     'gr',
     '30'

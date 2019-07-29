@@ -22,7 +22,7 @@
   "homepage": "https://github.com/Ahimta/bc-countries",
   "dependencies": {
     "digits-trie": "^1.0.0",
-    "google-libphonenumber": "^1.0.7"
+    "google-libphonenumber": "^3.2.3"
   },
   "devDependencies": {
     "browserify": "^11.2.0",
